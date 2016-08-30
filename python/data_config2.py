@@ -13,6 +13,6 @@ process.load("Configuration.Geometry.GeometryRecoDB_cff")
 #from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, '74X_dataRun2_Prompt_v4')
 
-process.tree = cms.EDAnalyzer('CTSkim')
+process.tree = cms.EDAnalyzer('HEPskim')
 process.TFileService = cms.Service("TFileService", fileName = cms.string('data_outputTree.root'))
 process.p = cms.Path(process.tree)
