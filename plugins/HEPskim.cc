@@ -40,6 +40,7 @@
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
 #include "DataFormats/Luminosity/interface/LumiSummary.h"
 #include "DataFormats/Luminosity/interface/LumiDetails.h"
+#include "DataFormats/BeamSpot/interface/BeamSpot.h"
 
 #include <string>
 #include <iostream>
@@ -66,6 +67,7 @@ private:
   std::vector<double> trpt, treta, trphi, dz, d0, dzerr, d0err, vx, vy, vz, chi2n, ptErr;
   std::vector<double> vtxx, vtxy, vtxz, vtxxErr, vtxyErr, vtxzErr, vtxchi2;
   std::vector<double> vtxxBS, vtxyBS, vtxzBS, vtxxErrBS, vtxyErrBS, vtxzErrBS, vtxchi2BS;
+  double BSx, BSy, BSz, BSzerr, BSdxy, BSxwidth, BSywidth; //no BSyerr, BSzerr. Use BSdxy.
   std::vector<int> trsize, highPurity, algo, nValidHits, nLostHits, charge, trigger;
   std::vector<int> vtxisValid, vtxisFake, vtxndof, vtxnTracks;
   std::vector<int> vtxisValidBS, vtxisFakeBS, vtxndofBS, vtxnTracksBS;
@@ -74,6 +76,7 @@ private:
   edm::EDGetTokenT<std::vector<reco::Track> > genTrk;
   edm::EDGetTokenT<std::vector<reco::Vertex> > hVtcess;
   edm::EDGetTokenT<std::vector<reco::Vertex> > hVtxx;
+  edm::EDGetTokenT<reco::BeamSpot> BS;
       // ----------member data ---------------------------
 };
 
@@ -140,12 +143,23 @@ HEPskim::HEPskim(const edm::ParameterSet& iConfig){
    tree -> Branch("vtxndofBS", &vtxndofBS); 
    tree -> Branch("vtxnTracksBS", &vtxnTracksBS); 
 
+   tree -> Branch("BSx", &BSx);
+   tree -> Branch("BSy", &BSy);
+   tree -> Branch("BSz", &BSz);
+   //tree -> Branch("BSxerr", &BSxerr);
+   //tree -> Branch("BSyerr", &BSyerr);
+   tree -> Branch("BSzerr", &BSzerr);
+   tree -> Branch("BSdxy", &BSdxy);
+   tree -> Branch("BSxwidth", &BSxwidth);
+   tree -> Branch("BSywidth", &BSywidth);
+
    tree -> Branch("trigger", &trigger);
 
    trigbit = consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","","HLT"));
    genTrk  = consumes<std::vector<reco::Track> >(edm::InputTag("generalTracks"));
    hVtcess = consumes<std::vector<reco::Vertex> >(edm::InputTag("offlinePrimaryVertices"));
    hVtxx = consumes<std::vector<reco::Vertex> >(edm::InputTag("offlinePrimaryVerticesWithBS"));
+   BS = consumes<reco::BeamSpot>(edm::InputTag("offlineBeamSpot"));
 }
 
 
@@ -265,6 +279,31 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
     vtxndofBS.push_back(ivtx->ndof());
     vtxnTracksBS.push_back(ivtx->nTracks());
   }  
+
+  reco::BeamSpot beamSpot;
+  edm::Handle<reco::BeamSpot> beamSpotHandle;
+  //iEvent.getByLabel("offlineBeamSpot", beamSpotHandle);
+  iEvent.getByToken(BS, beamSpotHandle);
+
+  if ( beamSpotHandle.isValid() )
+  {
+      beamSpot = *beamSpotHandle;
+
+  } else
+  {
+      edm::LogInfo("MyAnalyzer")
+        << "No beam spot available from EventSetup \n";
+  }
+
+  BSx = beamSpot.x0();
+  BSy = beamSpot.y0();
+  BSz = beamSpot.z0();
+  BSzerr = beamSpot.sigmaZ();
+  //BSyerr = beamSpot.sigmaY();
+  //BSzerr = beamSpot.sigmaX();
+  BSdxy = beamSpot.dxdz();
+  BSxwidth = beamSpot.BeamWidthX();
+  BSywidth = beamSpot.BeamWidthY();
 
   float bestSum = 0;
   int bestVtx = -1;
