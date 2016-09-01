@@ -68,7 +68,7 @@ private:
   std::vector<double> vtxx, vtxy, vtxz, vtxxErr, vtxyErr, vtxzErr, vtxchi2;
   std::vector<double> vtxxBS, vtxyBS, vtxzBS, vtxxErrBS, vtxyErrBS, vtxzErrBS, vtxchi2BS;
   double BSx, BSy, BSz, BSzerr, BSdxy, BSxwidth, BSywidth; //no BSyerr, BSzerr. Use BSdxy.
-  std::vector<int> trsize, highPurity, algo, nValidHits, nLostHits, charge, trigger;
+  std::vector<int> trsize, highPurity, algo, nValidHits, nLostHits, charge, trigger, triggerHM60, triggerHM85, triggerHM110, triggerHM135;
   std::vector<int> vtxisValid, vtxisFake, vtxndof, vtxnTracks;
   std::vector<int> vtxisValidBS, vtxisFakeBS, vtxndofBS, vtxnTracksBS;
   int irun, ilumi, ievt, vtx, vtxBS;
@@ -154,6 +154,10 @@ HEPskim::HEPskim(const edm::ParameterSet& iConfig){
    tree -> Branch("BSywidth", &BSywidth);
 
    tree -> Branch("trigger", &trigger);
+   tree -> Branch("triggerHM60", &triggerHM60);
+   tree -> Branch("triggerHM85", &triggerHM85);
+   tree -> Branch("triggerHM110", &triggerHM110);
+   tree -> Branch("triggerHM135", &triggerHM135);
 
    trigbit = consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","","HLT"));
    genTrk  = consumes<std::vector<reco::Track> >(edm::InputTag("generalTracks"));
@@ -228,6 +232,10 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   vtxnTracksBS.clear();
 
   trigger.clear();
+  triggerHM60.clear();
+  triggerHM85.clear();
+  triggerHM110.clear();
+  triggerHM135.clear();
 
   edm::Handle<edm::TriggerResults> triggerBits;
   edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
@@ -240,11 +248,21 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   }
   iEvent.getByLabel("selectedPatTrigger", triggerObjects);
   const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
-  int trgflag=0;
-  for(unsigned int itt = 0; itt<names.size(); itt++){
-    if((names.triggerName(itt).find("HLT_ZeroBias_") != string::npos))trgflag = (triggerBits->accept(itt)? 1 : 0);
+  int trgflag=0, trgHM60flag=0, trgHM85flag=0, trgHM110flag=0, trgHM135flag=0;
+  for(unsigned int itt = 0; itt<names.size(); itt++)
+  {
+    if((names.triggerName(itt).find("HLT_ZeroBias_") != string::npos)) trgflag = (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity60ForEndOfFill_v1") != string::npos)) trgHM60flag = (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity85ForEndOfFill_v1") != string::npos)) trgHM85flag = (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity110ForEndOfFill_v1") != string::npos)) trgHM110flag = (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity135ForEndOfFill_v1") != string::npos)) trgHM135flag = (triggerBits->accept(itt) ? 1 : 0);
   }
   trigger.push_back(trgflag);
+  triggerHM60.push_back(trgHM60flag);
+  triggerHM85.push_back(trgHM85flag);
+  triggerHM110.push_back(trgHM110flag);
+  triggerHM135.push_back(trgHM135flag);
+//HM trigger names: HLT_PixelTracks_Multiplicity60ForEndOfFill_v1, HLT_PixelTracks_Multiplicity85ForEndOfFill_v1, HLT_PixelTracks_Multiplicity110ForEndOfFill_v1, HLT_PixelTracks_Multiplicity135ForEndOfFill_v1
 
   edm::Handle<std::vector<reco::Vertex> > hVtces;
   iEvent.getByToken(hVtcess, hVtces);
