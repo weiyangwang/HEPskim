@@ -4,9 +4,7 @@
 // Class:      HEPskim
 // 
 /**\class HEPskim HEPskim.cc HEPskim/plugins/HEPskim.cc
-
  Description: [one line class summary]
-
  Implementation:
      [Notes on implementation]
 */
@@ -63,15 +61,15 @@ private:
   virtual void endJob() override;
   
   TTree *tree;
-  std::vector<reco::Candidate::LorentzVector> trp4;
-  std::vector<double> trpt, treta, trphi, dz, d0, dzerr, d0err, vx, vy, vz, chi2n, ptErr;
+  std::vector<reco::Candidate::LorentzVector> recoTracksp4;
+  std::vector<double> recoTrackspt, recoTrackseta, recoTracksphi, recoTracksdz, recoTracksd0, recoTracksdzErr, recoTracksd0Err, recoTracksvx, recoTracksvy, recoTracksvz, recoTrackschi2n, recoTracksptErr;
   std::vector<double> vtxx, vtxy, vtxz, vtxxErr, vtxyErr, vtxzErr, vtxchi2;
   std::vector<double> vtxxBS, vtxyBS, vtxzBS, vtxxErrBS, vtxyErrBS, vtxzErrBS, vtxchi2BS;
   double BSx, BSy, BSz, BSzerr, BSdxy, BSxwidth, BSywidth; //no BSyerr, BSzerr. Use BSdxy.
-  std::vector<int> trsize, highPurity, algo, nValidHits, nLostHits, charge, trigger, triggerHM60, triggerHM85, triggerHM110, triggerHM135;
+  std::vector<int> recoTrackssize, recoTrackshighPurity, recoTracksalgo, recoTracksnValidHits, recoTracksnLostHits, recoTrackscharge, trigger, triggerHM60, triggerHM85, triggerHM110, triggerHM135;
   std::vector<int> vtxisValid, vtxisFake, vtxndof, vtxnTracks;
   std::vector<int> vtxisValidBS, vtxisFakeBS, vtxndofBS, vtxnTracksBS;
-  int irun, ilumi, ievt, vtx, vtxBS;
+  int run, lumi, event, vtx, vtxBS;
   edm::EDGetTokenT<edm::TriggerResults> trigbit;
   edm::EDGetTokenT<std::vector<reco::Track> > genTrk;
   edm::EDGetTokenT<std::vector<reco::Vertex> > hVtcess;
@@ -95,29 +93,33 @@ HEPskim::HEPskim(const edm::ParameterSet& iConfig){
   //usesResource("TFileService");
    edm::Service<TFileService> fs;
    tree = fs->make<TTree>("tree","mytree");
-   tree -> Branch("Run", &irun); 
-   tree -> Branch("Lumi", &ilumi);
-   tree -> Branch("Evt", &ievt);
+   
+   
+   //----------these in root tree--------------
+   
+   tree -> Branch("Run", &run); 
+   tree -> Branch("Lumi", &lumi);
+   tree -> Branch("Evt", &event);
 
-   tree -> Branch("trP4", &trp4);
-   tree -> Branch("trPt", &trpt);
-   tree -> Branch("trSize", &trsize);
-   tree -> Branch("trEta", &treta);
-   tree -> Branch("trPhi", &trphi);
-   tree -> Branch("dz", &dz);
-   tree -> Branch("d0", &d0);
-   tree -> Branch("dzerr", &dzerr);
-   tree -> Branch("d0err", &d0err);
-   tree -> Branch("vx", &vx);
-   tree -> Branch("vy", &vy);
-   tree -> Branch("vz", &vz);
-   tree -> Branch("chi2n", &chi2n);
-   tree -> Branch("ptErr", &ptErr);
-   tree -> Branch("highPurity", &highPurity);
-   tree -> Branch("algo", &algo);
-   tree -> Branch("nValidHits", &nValidHits);
-   tree -> Branch("nLostHits", &nLostHits);
-   tree -> Branch("charge", &charge);
+   tree -> Branch("trP4", &recoTracksp4);
+   tree -> Branch("trPt", &recoTrackspt);
+   tree -> Branch("trSize", &recoTrackssize);
+   tree -> Branch("trEta", &recoTrackseta);
+   tree -> Branch("trPhi", &recoTracksphi);
+   tree -> Branch("dz", &recoTracksdz);
+   tree -> Branch("d0", &recoTracksd0);
+   tree -> Branch("dzerr", &recoTracksdzErr);
+   tree -> Branch("d0err", &recoTracksd0Err);
+   tree -> Branch("vx", &recoTracksvx);
+   tree -> Branch("vy", &recoTracksvy);
+   tree -> Branch("vz", &recoTracksvz);
+   tree -> Branch("chi2n", &recoTrackschi2n);
+   tree -> Branch("ptErr", &recoTracksptErr);
+   tree -> Branch("highPurity", &recoTrackshighPurity);
+   tree -> Branch("algo", &recoTracksalgo);
+   tree -> Branch("nValidHits", &recoTracksnValidHits);
+   tree -> Branch("nLostHits", &recoTracksnLostHits);
+   tree -> Branch("charge", &recoTrackscharge);
 
    tree -> Branch("vtxx", &vtxx); 
    tree -> Branch("vtxy", &vtxy); 
@@ -177,33 +179,33 @@ HEPskim::~HEPskim(){}
 // ------------ method called for each event  ------------
 void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
 
-  irun = iEvent.id().run();
-  ilumi = iEvent.luminosityBlock();
-  ievt = iEvent.id().event();
+  run = iEvent.id().run();
+  lumi = iEvent.luminosityBlock();
+  event = iEvent.id().event();
   
   using namespace edm;
   using namespace std;
   using namespace reco;
 
-  trp4.clear();
-  trpt.clear();
-  trsize.clear();
-  treta.clear();
-  trphi.clear();
-  dz.clear();
-  d0.clear();
-  dzerr.clear();
-  d0err.clear();
-  vx.clear();
-  vy.clear();
-  vz.clear();
-  chi2n.clear();
-  ptErr.clear();
-  highPurity.clear();
-  algo.clear();
-  nValidHits.clear();
-  nLostHits.clear();
-  charge.clear();
+  recoTracksp4.clear();
+  recoTrackspt.clear();
+  recoTrackssize.clear();
+  recoTrackseta.clear();
+  recoTracksphi.clear();
+  recoTracksdz.clear();
+  recoTracksd0.clear();
+  recoTracksdzErr.clear();
+  recoTracksd0Err.clear();
+  recoTracksvx.clear();
+  recoTracksvy.clear();
+  recoTracksvz.clear();
+  recoTrackschi2n.clear();
+  recoTracksptErr.clear();
+  recoTrackshighPurity.clear();
+  recoTracksalgo.clear();
+  recoTracksnValidHits.clear();
+  recoTracksnLostHits.clear();
+  recoTrackscharge.clear();
 
   //vtx.clear(); //integer
   //vtxBS.clear(); //integer
@@ -341,7 +343,7 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   edm::Handle<vector<reco::Track> > trs;
   iEvent.getByToken(genTrk, trs);
-  trsize.push_back(trs->size());
+  recoTrackssize.push_back(trs->size());
   for (reco::TrackCollection::const_iterator itTrack = trs->begin(); itTrack != trs->end(); ++itTrack) { 
     if(itTrack->pt()<=0.5 || fabs(itTrack->eta())>=3.0 ) continue;
     double px = itTrack->px();
@@ -352,26 +354,26 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
     reco::Candidate::LorentzVector pp;
     pp.SetPxPyPzE(px,py,pz,E);
     //cout<<"\npx = "<<pp.Px();
-    trp4.push_back(pp);
-    trpt.push_back(itTrack->pt());
-    treta.push_back(itTrack->eta());
-    trphi.push_back(itTrack->phi());
-    dz.push_back(itTrack->dz());
-    d0.push_back(itTrack->d0());
-    dzerr.push_back(itTrack->dzError());
-    d0err.push_back(itTrack->d0Error());
-    vx.push_back(itTrack->vx());
-    vy.push_back(itTrack->vy());
-    vz.push_back(itTrack->vz());
+    recoTracksp4.push_back(pp);
+    recoTrackspt.push_back(itTrack->pt());
+    recoTrackseta.push_back(itTrack->eta());
+    recoTracksphi.push_back(itTrack->phi());
+    recoTracksdz.push_back(itTrack->dz());
+    recoTracksd0.push_back(itTrack->d0());
+    recoTracksdzErr.push_back(itTrack->dzError());
+    recoTracksd0Err.push_back(itTrack->d0Error());
+    recoTracksvx.push_back(itTrack->vx());
+    recoTracksvy.push_back(itTrack->vy());
+    recoTracksvz.push_back(itTrack->vz());
     int highpurity = 1;
     if(!itTrack->quality(reco::TrackBase::highPurity)) highpurity = 0;
-    chi2n.push_back(itTrack->normalizedChi2() );
-    ptErr.push_back(itTrack->ptError() );
-    highPurity.push_back(highpurity);
-    algo.push_back(itTrack->algo() );
-    nValidHits.push_back(itTrack->numberOfValidHits() );
-    nLostHits.push_back(itTrack->numberOfLostHits() );
-    charge.push_back(itTrack->charge());
+    recoTrackschi2n.push_back(itTrack->normalizedChi2() );
+    recoTracksptErr.push_back(itTrack->ptError() );
+    recoTrackshighPurity.push_back(highpurity);
+    recoTracksalgo.push_back(itTrack->algo() );
+    recoTracksnValidHits.push_back(itTrack->numberOfValidHits() );
+    recoTracksnLostHits.push_back(itTrack->numberOfLostHits() );
+    recoTrackscharge.push_back(itTrack->charge());
 
   }
   
