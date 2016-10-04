@@ -65,7 +65,7 @@ private:
   std::vector<double> recoTrackspt, recoTrackseta, recoTracksphi, recoTracksdz, recoTracksd0, recoTracksdzErr, recoTracksd0Err, recoTracksvx, recoTracksvy, recoTracksvz, recoTrackschi2n, recoTracksptErr;
   std::vector<double> vtxx, vtxy, vtxz, vtxxErr, vtxyErr, vtxzErr, vtxchi2;
   std::vector<double> vtxxBS, vtxyBS, vtxzBS, vtxxErrBS, vtxyErrBS, vtxzErrBS, vtxchi2BS;
-  double BSx, BSy, BSz, BSzerr, BSdxy, BSxwidth, BSywidth; //no BSyerr, BSzerr. Use BSdxy.
+  double BSx, BSy, BSz, BSzerr, BSxwidth, BSywidth; //no BSyerr, BSxerr, use BSxwidth, BSywidth. // BSdxz removed.
   std::vector<int> recoTrackssize, recoTrackshighPurity, recoTracksalgo, recoTracksnValidHits, recoTracksnLostHits, recoTrackscharge, trigger, triggerHM60, triggerHM85, triggerHM110, triggerHM135;
   std::vector<int> vtxisValid, vtxisFake, vtxndof, vtxnTracks;
   std::vector<int> vtxisValidBS, vtxisFakeBS, vtxndofBS, vtxnTracksBS;
@@ -151,9 +151,9 @@ HEPskim::HEPskim(const edm::ParameterSet& iConfig){
    //tree -> Branch("BSxerr", &BSxerr);
    //tree -> Branch("BSyerr", &BSyerr);
    tree -> Branch("BSzerr", &BSzerr);
-   tree -> Branch("BSdxy", &BSdxy);
-   tree -> Branch("BSxwidth", &BSxwidth);
-   tree -> Branch("BSywidth", &BSywidth);
+   //tree -> Branch("BSdxz", &BSdxz);
+   tree -> Branch("BSxwidth", &BSxwidth);   //corresponds to beamspot x error
+   tree -> Branch("BSywidth", &BSywidth);   //corresponds to beamspot y error
 
    tree -> Branch("trigger", &trigger);
    tree -> Branch("triggerHM60", &triggerHM60);
@@ -321,9 +321,9 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   BSzerr = beamSpot.sigmaZ();
   //BSyerr = beamSpot.sigmaY();
   //BSzerr = beamSpot.sigmaX();
-  BSdxy = beamSpot.dxdz();
-  BSxwidth = beamSpot.BeamWidthX();
-  BSywidth = beamSpot.BeamWidthY();
+  //BSdxz = beamSpot.dxdz();
+  BSxwidth = beamSpot.BeamWidthX();  //beamspot error in x
+  BSywidth = beamSpot.BeamWidthY();  //beamspot error in y
 
   float bestSum = 0;
   int bestVtx = -1;
