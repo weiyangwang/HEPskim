@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    Test/HEPskim
-// Class:      HEPskim
+// Package:    Test/HEPminiskim
+// Class:      HEPminiskim
 // 
-/**\class HEPskim HEPskim.cc HEPskim/plugins/HEPskim.cc
+/**\class HEPminiskim HEPminiskim.cc HEPskim/plugins/HEPminiskim.cc
  Description: [one line class summary]
  Implementation:
      [Notes on implementation]
@@ -49,10 +49,10 @@
 #include "TTree.h"
 #include "TLorentzVector.h"
 
-class HEPskim : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+class HEPminiskim : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 public:
-  explicit HEPskim(const edm::ParameterSet&);
-  ~HEPskim();
+  explicit HEPminiskim(const edm::ParameterSet&);
+  ~HEPminiskim();
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
 private:
@@ -64,17 +64,18 @@ private:
   std::vector<reco::Candidate::LorentzVector> recoTracksp4;
   std::vector<double> recoTrackspt, recoTrackseta, recoTracksphi, recoTracksdz, recoTracksd0, recoTracksdzErr, recoTracksd0Err, recoTracksvx, recoTracksvy, recoTracksvz, recoTrackschi2n, recoTracksptErr;
   std::vector<double> vtxx, vtxy, vtxz, vtxxErr, vtxyErr, vtxzErr, vtxchi2;
-  std::vector<double> vtxxBS, vtxyBS, vtxzBS, vtxxErrBS, vtxyErrBS, vtxzErrBS, vtxchi2BS;
+//  std::vector<double> vtxxBS, vtxyBS, vtxzBS, vtxxErrBS, vtxyErrBS, vtxzErrBS, vtxchi2BS;
   double BSx, BSy, BSz, BSzerr, BSxwidth, BSywidth; //no BSyerr, BSxerr, use BSxwidth, BSywidth. // BSdxz removed.
   std::vector<int> recoTrackssize, recoTrackshighPurity, recoTracksalgo, recoTracksnValidHits, recoTracksnLostHits, recoTrackscharge, trigger, triggerHM60, triggerHM85, triggerHM110, triggerHM135;
   std::vector<int> vtxisValid, vtxisFake, vtxndof, vtxnTracks;
-  std::vector<int> vtxisValidBS, vtxisFakeBS, vtxndofBS, vtxnTracksBS;
-  int run, lumi, event, vtx, vtxBS;
+//  std::vector<int> vtxisValidBS, vtxisFakeBS, vtxndofBS, vtxnTracksBS;
+  int run, lumi, event, vtx;
+  //int vtxBS;
   edm::EDGetTokenT<edm::TriggerResults> trigbit;
   //edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> trigObj; 
   edm::EDGetTokenT<std::vector<reco::Track> > genTrk;
   edm::EDGetTokenT<std::vector<reco::Vertex> > hVtcess;
-  edm::EDGetTokenT<std::vector<reco::Vertex> > hVtxx;
+//  edm::EDGetTokenT<std::vector<reco::Vertex> > hVtxx;
   edm::EDGetTokenT<reco::BeamSpot> BS;
       // ----------member data ---------------------------
 };
@@ -90,7 +91,7 @@ private:
 //
 // constructors and destructor
 //
-HEPskim::HEPskim(const edm::ParameterSet& iConfig){
+HEPminiskim::HEPminiskim(const edm::ParameterSet& iConfig){
   //usesResource("TFileService");
    edm::Service<TFileService> fs;
    tree = fs->make<TTree>("tree","mytree");
@@ -122,7 +123,6 @@ HEPskim::HEPskim(const edm::ParameterSet& iConfig){
    tree -> Branch("nLostHits", &recoTracksnLostHits);
    tree -> Branch("charge", &recoTrackscharge);
 
-   tree -> Branch("vtx", &vtx);
    tree -> Branch("vtxx", &vtxx); 
    tree -> Branch("vtxy", &vtxy); 
    tree -> Branch("vtxz", &vtxz); 
@@ -135,7 +135,7 @@ HEPskim::HEPskim(const edm::ParameterSet& iConfig){
    tree -> Branch("vtxndof", &vtxndof); 
    tree -> Branch("vtxnTracks", &vtxnTracks); 
 
-   tree -> Branch("vtxBS", &vtxBS);
+/*  tree->Branch("vtxBS", &vtxBS);
    tree -> Branch("vtxxBS", &vtxxBS); 
    tree -> Branch("vtxyBS", &vtxyBS); 
    tree -> Branch("vtxzBS", &vtxzBS); 
@@ -147,7 +147,7 @@ HEPskim::HEPskim(const edm::ParameterSet& iConfig){
    tree -> Branch("vtxisFakeBS", &vtxisFakeBS); 
    tree -> Branch("vtxndofBS", &vtxndofBS); 
    tree -> Branch("vtxnTracksBS", &vtxnTracksBS); 
-
+*/
    tree -> Branch("BSx", &BSx);
    tree -> Branch("BSy", &BSy);
    tree -> Branch("BSz", &BSz);
@@ -167,13 +167,13 @@ HEPskim::HEPskim(const edm::ParameterSet& iConfig){
    trigbit = consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","","HLT"));
    //trigObj = consumes<pat::TriggerObjectStandAloneCollection>(edm::InputTag("selectedPatTrigger"));
    genTrk  = consumes<std::vector<reco::Track> >(edm::InputTag("generalTracks"));
-   hVtcess = consumes<std::vector<reco::Vertex> >(edm::InputTag("offlinePrimaryVertices"));
-   hVtxx = consumes<std::vector<reco::Vertex> >(edm::InputTag("offlinePrimaryVerticesWithBS"));
+   hVtcess = consumes<std::vector<reco::Vertex> >(edm::InputTag("offlineSlimmedPrimaryVertices"));
+//   hVtxx = consumes<std::vector<reco::Vertex> >(edm::InputTag("offlinePrimaryVerticesWithBS"));
    BS = consumes<reco::BeamSpot>(edm::InputTag("offlineBeamSpot"));
 }
 
 
-HEPskim::~HEPskim(){}
+HEPminiskim::~HEPminiskim(){}
 
 
 //
@@ -181,7 +181,7 @@ HEPskim::~HEPskim(){}
 //
 
 // ------------ method called for each event  ------------
-void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
+void HEPminiskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   run = iEvent.id().run();
   lumi = iEvent.luminosityBlock();
@@ -224,7 +224,7 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   vtxisFake.clear();
   vtxndof.clear();
   vtxnTracks.clear();
-
+/*
   vtxxBS.clear();
   vtxyBS.clear();
   vtxzBS.clear();
@@ -236,7 +236,7 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   vtxisFakeBS.clear();
   vtxndofBS.clear();
   vtxnTracksBS.clear();
-
+*/
   trigger.clear();
   triggerHM60.clear();
   triggerHM85.clear();
@@ -272,7 +272,7 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   edm::Handle<std::vector<reco::Vertex> > hVtces;
   iEvent.getByToken(hVtcess, hVtces);
-  vtx = hVtces->size();
+  //vtx = hVtces->size();
   for(reco::VertexCollection::const_iterator ivtc = hVtces->begin(); ivtc != hVtces->end(); ++ivtc){
     vtxx.push_back(ivtc->x());
     vtxy.push_back(ivtc->y());
@@ -287,7 +287,7 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
     vtxnTracks.push_back(ivtc->nTracks());
   }
 
-  edm::Handle<std::vector<reco::Vertex> > hVtx;
+/*  edm::Handle<std::vector<reco::Vertex> > hVtx;
   iEvent.getByToken(hVtxx, hVtx);
   vtxBS = hVtx->size();
   for(reco::VertexCollection::const_iterator ivtx = hVtx->begin(); ivtx != hVtx->end(); ++ivtx){
@@ -303,7 +303,7 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
     vtxndofBS.push_back(ivtx->ndof());
     vtxnTracksBS.push_back(ivtx->nTracks());
   }  
-
+*/
   reco::BeamSpot beamSpot;
   edm::Handle<reco::BeamSpot> beamSpotHandle;
   //iEvent.getByLabel("offlineBeamSpot", beamSpotHandle);
@@ -331,9 +331,9 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   float bestSum = 0;
   int bestVtx = -1;
-  for (unsigned int ivtx = 0; ivtx< hVtx->size();++ivtx){
-    reco::Vertex::trackRef_iterator it = hVtx->at(ivtx).tracks_begin();
-    reco::Vertex::trackRef_iterator itE = hVtx->at(ivtx).tracks_end();
+  for (unsigned int ivtx = 0; ivtx< hVtces->size();++ivtx){
+    reco::Vertex::trackRef_iterator it = hVtces->at(ivtx).tracks_begin();
+    reco::Vertex::trackRef_iterator itE = hVtces->at(ivtx).tracks_end();
     float sum= 0;
     for (;it!=itE;++it ){
       sum+=(*it)->pt();
@@ -396,15 +396,15 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
 
 
 // ------------ method called once each job just before starting event loop  ------------
-void HEPskim::beginJob(){}
+void HEPminiskim::beginJob(){}
 
 // ------------ method called once each job just after ending the event loop  ------------
 void 
-HEPskim::endJob(){}
+HEPminiskim::endJob(){}
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-HEPskim::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+HEPminiskim::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -413,4 +413,4 @@ HEPskim::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(HEPskim);
+DEFINE_FWK_MODULE(HEPminiskim);

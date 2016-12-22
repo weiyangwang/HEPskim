@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 process = cms.Process("anaTree")
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 #data set with HM triggers '/HighMultiplicity/Run2015B-PromptReco-v1/RECO'
 #process.source = cms.Source("PoolSource",
@@ -11,39 +11,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 #	'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/00BA646E-D82B-E511-A218-02163E01439E.root'
 #        )
 #                            )
-source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles)
+readFiles = cms.untracked.vstring([])
 readFiles.extend( [
-'''/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/096/00000/1C89895E-5626-E511-A518-02163E0119E7.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/161/00000/8E6BED41-9C26-E511-AD51-02163E0121BD.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/162/00000/181C38DA-4127-E511-A886-02163E0117FF.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/163/00000/24A22917-A026-E511-A564-02163E0119C9.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/164/00000/BAFF98A7-A226-E511-9B7D-02163E0134FD.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/167/00000/2E693E9D-A726-E511-9836-02163E012577.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/168/00000/E463C307-BC26-E511-9F0A-02163E0118E8.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/244/00000/0031099F-4027-E511-A302-02163E011A5A.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/251/00000/B613C03B-6D27-E511-9954-02163E01421E.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/252/00000/F269174E-7B27-E511-A254-02163E0118E7.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/491/00000/6AF23001-C628-E511-8A8D-02163E012543.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/493/00000/2A60730B-C928-E511-BCDA-02163E01416E.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/496/00000/72786592-912C-E511-A686-02163E012283.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/497/00000/F68E8014-E028-E511-B15F-02163E012031.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/498/00000/90F2E3EB-ED28-E511-8E36-02163E014376.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/499/00000/1E40D50D-F528-E511-967B-02163E01295D.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/500/00000/00437941-2429-E511-8446-02163E01340A.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/521/00000/36C15A95-5829-E511-9C15-02163E0133B6.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/522/00000/D2E38870-5929-E511-83BC-02163E011D88.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/548/00000/E62033BF-A029-E511-A6D6-02163E0133F9.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/559/00000/B23D5BC8-A62C-E511-A712-02163E013432.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/560/00000/DAD08770-DD29-E511-9AFC-02163E011DE5.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/561/00000/6E95D69E-E429-E511-97FE-02163E0136E2.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/562/00000/7A820A37-6F2A-E511-94C9-02163E01477B.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/604/00000/062652D6-8F2A-E511-9225-02163E0140DC.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/612/00000/4C2AD591-932A-E511-BB78-02163E0141E9.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/628/00000/9A751BD1-B52A-E511-B427-02163E01416E.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/638/00000/B89EEC05-CD2A-E511-99C9-02163E014272.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/642/00000/4228603F-D02A-E511-9AFF-02163E014527.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/643/00000/480FC869-862C-E511-A27B-02163E012787.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/716/00000/B492069D-2F2C-E511-9E6D-02163E012595.root','''
 '/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/00BA646E-D82B-E511-A218-02163E01439E.root',
 '/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/02BC1A61-D62B-E511-8DB8-02163E0143C0.root',
 '/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/045D6868-D42B-E511-8F09-02163E0136E6.root',
@@ -184,36 +153,15 @@ readFiles.extend( [
 '/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/F8C4FDB8-E22B-E511-A176-02163E014437.root',
 '/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/FC1450B3-D32B-E511-83B8-02163E0124CC.root',
 '/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/FC1B79CA-D72B-E511-BBF7-02163E013645.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/FEF0C6A7-E42B-E511-A32E-02163E011C0F.root'#,
-'''/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/781/00000/D4D3A865-9A2C-E511-A2F6-02163E0129DA.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/883/00000/90DA6FB9-1B2D-E511-A87A-02163E011CDB.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/102/00000/3EA4C8E1-D92F-E511-B40C-02163E0133B0.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/116/00000/1AC49142-1D30-E511-9690-02163E012B4C.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/126/00000/24785DA6-A230-E511-872B-02163E0135E1.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/488/00000/ACB8E315-EE35-E511-ABD1-02163E01449C.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/489/00000/6EE68968-3434-E511-A7B8-02163E011DE5.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/490/00000/CCAB1ED9-3334-E511-8A0C-02163E0138B0.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/492/00000/B83462D1-4634-E511-BA9B-02163E014543.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/496/00000/C64A24ED-CA35-E511-BDC0-02163E012736.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/499/00000/54F6EFCE-CA35-E511-A22F-02163E013560.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/252/501/00000/1AFB942D-CA35-E511-8A9B-02163E014769.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/253/571/00000/342746BC-F03D-E511-B238-02163E0126A0.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/253/578/00000/C6F45461-F63D-E511-838D-02163E01289E.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/253/596/00000/D415E1AF-053E-E511-A922-02163E0128F0.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/253/607/00000/DEBCCB2E-0E3E-E511-B00D-02163E01280B.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/253/608/00000/D0B34E99-0F3E-E511-89AF-02163E013481.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/253/611/00000/F061E281-103E-E511-8BD8-02163E013631.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/253/612/00000/CCA97933-123E-E511-9A15-02163E013542.root',
-'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/253/620/00000/AE438CC1-763F-E511-A125-02163E014597.root''' ] );
+'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/FEF0C6A7-E42B-E511-A32E-02163E011C0F.root'
+ ] );
 
-
-secFiles.extend( [
-               ] )
+process.source = cms.Source ("PoolSource",fileNames = readFiles)
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 #process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 #from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, '74X_dataRun2_Prompt_v4')
 
 process.tree = cms.EDAnalyzer('HEPskim')
-process.TFileService = cms.Service("TFileService", fileName = cms.string('data_outputTree.root'))
+process.TFileService = cms.Service("TFileService", fileName = cms.string('dataHM_outputTree.root'))
 process.p = cms.Path(process.tree)

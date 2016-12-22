@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 process = cms.Process("anaTree")
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 #data set with HM triggers '/HighMultiplicity/Run2015B-PromptReco-v1/RECO'
 #process.source = cms.Source("PoolSource",
@@ -11,7 +11,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 #	'/store/data/Run2015B/HighMultiplicity/RECO/PromptReco-v1/000/251/721/00000/00BA646E-D82B-E511-A218-02163E01439E.root'
 #        )
 #                            )
-source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles)
+readFiles = []
 readFiles.extend( [
 '/store/data/Run2015B/ZeroBias1/RECO/PromptReco-v1/000/251/721/00000/00F336E7-3F2C-E511-912B-02163E0139B0.root',
 '/store/data/Run2015B/ZeroBias1/RECO/PromptReco-v1/000/251/721/00000/0A227A7F-3F2C-E511-871E-02163E011D30.root',
@@ -459,6 +459,7 @@ readFiles.extend( [
 '/store/data/Run2015B/ZeroBias8/RECO/PromptReco-v1/000/251/721/00000/EC3FB2DF-382C-E511-BA51-02163E01359E.root',
 '/store/data/Run2015B/ZeroBias8/RECO/PromptReco-v1/000/251/721/00000/FAC95B15-3A2C-E511-9525-02163E01477B.root'
 ] ) 
+process.source = cms.Source ("PoolSource",fileNames = cms.untracked.vstring(readFiles))
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 #process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 #from Configuration.AlCa.GlobalTag import GlobalTag
