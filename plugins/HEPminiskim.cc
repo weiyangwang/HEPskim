@@ -123,6 +123,7 @@ HEPminiskim::HEPminiskim(const edm::ParameterSet& iConfig){
    tree -> Branch("nLostHits", &recoTracksnLostHits);
    tree -> Branch("charge", &recoTrackscharge);
 
+   tree -> Branch("vtx", &vtx);
    tree -> Branch("vtxx", &vtxx); 
    tree -> Branch("vtxy", &vtxy); 
    tree -> Branch("vtxz", &vtxz); 
@@ -272,7 +273,7 @@ void HEPminiskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
 
   edm::Handle<std::vector<reco::Vertex> > hVtces;
   iEvent.getByToken(hVtcess, hVtces);
-  //vtx = hVtces->size();
+  vtx = hVtces->size();
   for(reco::VertexCollection::const_iterator ivtc = hVtces->begin(); ivtc != hVtces->end(); ++ivtc){
     vtxx.push_back(ivtc->x());
     vtxy.push_back(ivtc->y());
