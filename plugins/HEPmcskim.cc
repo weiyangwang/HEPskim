@@ -440,10 +440,10 @@ void HEPmcskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     recoTrackseta.push_back(itTrack->eta());
     recoTracksphi.push_back(itTrack->phi());
     recoTracksdz.push_back(itTrack->dz());
-    recoTracksdzvtxBS.push_back(itTrack->dz(itTrack->vertex()));
+    recoTracksdzvtxBS.push_back(itTrack->dz(hVtx->at(ibestvtxBS).position()));
     recoTracksdzBS.push_back(itTrack->dz(beamSpot.position()));
     recoTracksd0.push_back(itTrack->d0());
-    recoTracksdxyvtxBS.push_back(itTrack->dxy(itTrack->vertex()));
+    recoTracksdxyvtxBS.push_back(itTrack->dxy(hVtx->at(ibestvtxBS).position()));
     recoTracksdxyBS.push_back(itTrack->dxy(beamSpot.position()));
     recoTracksdzErr.push_back(itTrack->dzError());
     recoTracksd0Err.push_back(itTrack->d0Error());
