@@ -65,6 +65,7 @@ private:
   TTree *tree;
   std::vector<reco::Candidate::LorentzVector> recoTracksp4;
   std::vector<double> recoTrackspt, recoTrackseta, recoTracksphi, recoTracksdz, recoTracksd0, recoTracksdzErr, recoTracksd0Err, recoTracksvx, recoTracksvy, recoTracksvz, recoTrackschi2n, recoTracksptErr;
+  std::vector<double> recoTracksdxyvtxBS, recoTracksdxyBS, recoTracksdzvtxBS, recoTracksdzBS;
   std::vector<reco::Candidate::LorentzVector> genParticlesp4;
   std::vector<double> genParticlespt, genParticleseta, genParticlesphi, genParticlesmass, genParticlesvx, genParticlesvy, genParticlesvz;
   std::vector<double> vtxx, vtxy, vtxz, vtxxErr, vtxyErr, vtxzErr, vtxchi2;
@@ -74,7 +75,7 @@ private:
   std::vector<int> genParticlessize, genParticlespdgid, genParticlesst, genParticlescharge;
   std::vector<int> vtxisValid, vtxisFake, vtxndof, vtxnTracks;
   std::vector<int> vtxisValidBS, vtxisFakeBS, vtxndofBS, vtxnTracksBS;
-  int run, lumi, event, vtx, vtxBS;
+  int run, lumi, event, vtx, vtxBS, ibestvtxBS;
   edm::EDGetTokenT<edm::TriggerResults> trigbit;
   //edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> trigObj; 
   edm::EDGetTokenT<std::vector<reco::Track> > genTrk;
@@ -115,7 +116,11 @@ HEPmcskim::HEPmcskim(const edm::ParameterSet& iConfig){
    tree -> Branch("trEta", &recoTrackseta);
    tree -> Branch("trPhi", &recoTracksphi);
    tree -> Branch("dz", &recoTracksdz);
+   tree -> Branch("dzvtxBS", &recoTracksdzvtxBS);
+   tree -> Branch("dzBS", &recoTracksdzBS);
    tree -> Branch("d0", &recoTracksd0);
+   tree -> Branch("dxyvtxBS", &recoTracksdxyvtxBS);
+   tree -> Branch("dxyBS", &recoTracksdxyBS);
    tree -> Branch("dzerr", &recoTracksdzErr);
    tree -> Branch("d0err", &recoTracksd0Err);
    tree -> Branch("vx", &recoTracksvx);
@@ -155,6 +160,7 @@ HEPmcskim::HEPmcskim(const edm::ParameterSet& iConfig){
    tree -> Branch("vtxndof", &vtxndof); 
    tree -> Branch("vtxnTracks", &vtxnTracks); 
 
+   tree -> Branch("ibestvtxBS", &ibestvtxBS);
    tree -> Branch("vtxBS", &vtxBS);
    tree -> Branch("vtxxBS", &vtxxBS); 
    tree -> Branch("vtxyBS", &vtxyBS); 
@@ -218,7 +224,11 @@ void HEPmcskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   recoTrackseta.clear();
   recoTracksphi.clear();
   recoTracksdz.clear();
+  recoTracksdzvtxBS.clear();
+  recoTracksdzBS.clear();
   recoTracksd0.clear();
+  recoTracksdxyvtxBS.clear();
+  recoTracksdxyBS.clear();
   recoTracksdzErr.clear();
   recoTracksd0Err.clear();
   recoTracksvx.clear();
@@ -384,6 +394,7 @@ void HEPmcskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       bestVtx = ivtx;
     }
   }
+  ibestvtxBS = bestVtx;
   if(bestVtx < 0) return;
 
   edm::Handle<reco::GenParticleCollection> ps;
@@ -429,7 +440,11 @@ void HEPmcskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     recoTrackseta.push_back(itTrack->eta());
     recoTracksphi.push_back(itTrack->phi());
     recoTracksdz.push_back(itTrack->dz());
+    recoTracksdzvtxBS.push_back(itTrack->dz(itTrack->vertex()));
+    recoTracksdzBS.push_back(itTrack->dz(beamSpot.position()));
     recoTracksd0.push_back(itTrack->d0());
+    recoTracksdxyvtxBS.push_back(itTrack->dxy(itTrack->vertex()));
+    recoTracksdxyBS.push_back(itTrack->dxy(beamSpot.position()));
     recoTracksdzErr.push_back(itTrack->dzError());
     recoTracksd0Err.push_back(itTrack->d0Error());
     recoTracksvx.push_back(itTrack->vx());
