@@ -67,7 +67,7 @@ private:
   std::vector<double> vtxx, vtxy, vtxz, vtxxErr, vtxyErr, vtxzErr, vtxchi2;
   std::vector<double> vtxxBS, vtxyBS, vtxzBS, vtxxErrBS, vtxyErrBS, vtxzErrBS, vtxchi2BS;
   double BSx, BSy, BSz, BSzerr, BSxwidth, BSywidth; //no BSyerr, BSxerr, use BSxwidth, BSywidth. // BSdxz removed.
-  std::vector<int> recoTrackssize, recoTrackshighPurity, recoTracksalgo, recoTracksnValidHits, recoTracksnLostHits, recoTrackscharge, trigger, triggerHM60, triggerHM85, triggerHM110, triggerHM135;
+  std::vector<int> recoTrackssize, recoTrackshighPurity, recoTracksalgo, recoTracksnValidHits, recoTracksnLostHits, recoTrackscharge, trigger, triggerHM60, triggerHM85, triggerHM110, triggerHM135, triggerHM160;
   std::vector<int> vtxisValid, vtxisFake, vtxndof, vtxnTracks;
   std::vector<int> vtxisValidBS, vtxisFakeBS, vtxndofBS, vtxnTracksBS;
   int run, lumi, event, vtx, vtxBS, ibestvtxBS;
@@ -78,7 +78,7 @@ private:
   edm::EDGetTokenT<std::vector<reco::Vertex> > hVtxx;
   edm::EDGetTokenT<reco::BeamSpot> BS;
       // ----------member data --------------------------
-  int countEvt, countZB, countHM60, countHM85, countHM110, countHM135;
+  int countEvt, countZB, countHM60, countHM85, countHM110, countHM135, countHM160;
 };
 
 //
@@ -289,7 +289,7 @@ void HEPskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   triggerHM85.push_back(trgHM85flag);
   triggerHM110.push_back(trgHM110flag);
   triggerHM135.push_back(trgHM135flag);
-  triggerHM135.push_back(trgHM160flag);
+  triggerHM160.push_back(trgHM160flag);
   countZB += trgflag;
   countHM60 += trgHM60flag;
   countHM85 += trgHM85flag;
