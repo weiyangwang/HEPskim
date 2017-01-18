@@ -109,12 +109,12 @@ HEPskim::HEPskim(const edm::ParameterSet& iConfig){
    tree -> Branch("trSize", &recoTrackssize);
    tree -> Branch("trEta", &recoTrackseta);
    tree -> Branch("trPhi", &recoTracksphi);
-   tree -> Branch("dz", &recoTracksdz);
+   //tree -> Branch("dz", &recoTracksdz);
    tree -> Branch("dzvtxBS", &recoTracksdzvtxBS);
-   tree -> Branch("dzBS", &recoTracksdzBS);
-   tree -> Branch("d0", &recoTracksd0);
+   //tree -> Branch("dzBS", &recoTracksdzBS);
+   //tree -> Branch("d0", &recoTracksd0);
    tree -> Branch("dxyvtxBS", &recoTracksdxyvtxBS);
-   tree -> Branch("dxyBS", &recoTracksdxyBS); 
+   //tree -> Branch("dxyBS", &recoTracksdxyBS); 
    tree -> Branch("dzerr", &recoTracksdzErr);
    tree -> Branch("d0err", &recoTracksd0Err);
    tree -> Branch("vx", &recoTracksvx);
