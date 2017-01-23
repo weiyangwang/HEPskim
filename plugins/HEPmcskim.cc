@@ -71,7 +71,7 @@ private:
   std::vector<double> vtxx, vtxy, vtxz, vtxxErr, vtxyErr, vtxzErr, vtxchi2;
   std::vector<double> vtxxBS, vtxyBS, vtxzBS, vtxxErrBS, vtxyErrBS, vtxzErrBS, vtxchi2BS;
   double BSx, BSy, BSz, BSzerr, BSxwidth, BSywidth; //no BSyerr, BSxerr, use BSxwidth, BSywidth. // BSdxz removed.
-  std::vector<int> recoTrackssize, recoTrackshighPurity, recoTracksalgo, recoTracksnValidHits, recoTracksnLostHits, recoTrackscharge, trigger, triggerHM60, triggerHM85, triggerHM110, triggerHM135;
+  std::vector<int> recoTrackssize, recoTrackshighPurity, recoTracksalgo, recoTracksnValidHits, recoTracksnLostHits, recoTrackscharge, trigger, triggerMB, triggerHM60, triggerHM85, triggerHM110, triggerHM135, triggerHM160;
   std::vector<int> genParticlessize, genParticlespdgid, genParticlesst, genParticlescharge;
   std::vector<int> vtxisValid, vtxisFake, vtxndof, vtxnTracks;
   std::vector<int> vtxisValidBS, vtxisFakeBS, vtxndofBS, vtxnTracksBS;
@@ -84,7 +84,7 @@ private:
   edm::EDGetTokenT<std::vector<reco::Vertex> > hVtxx;
   edm::EDGetTokenT<reco::BeamSpot> BS;
       // ----------member data --------------------------
-  int countEvt, countZB, countHM60, countHM85, countHM110, countHM135;
+  int countEvt, countZB, countMB, countHM60, countHM85, countHM110, countHM135, countHM160;
 };
 
 //
@@ -185,10 +185,12 @@ HEPmcskim::HEPmcskim(const edm::ParameterSet& iConfig){
    tree -> Branch("BSywidth", &BSywidth);   //corresponds to beamspot y error
 
    tree -> Branch("trigger", &trigger);
+   tree -> Branch("triggerMB", &triggerMB);
    tree -> Branch("triggerHM60", &triggerHM60);
    tree -> Branch("triggerHM85", &triggerHM85);
    tree -> Branch("triggerHM110", &triggerHM110);
    tree -> Branch("triggerHM135", &triggerHM135);
+   tree -> Branch("triggerHM160", &triggerHM160);
 
    trigbit = consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","","HLT"));
    //trigObj = consumes<pat::TriggerObjectStandAloneCollection>(edm::InputTag("selectedPatTrigger"));
@@ -282,10 +284,12 @@ void HEPmcskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   vtxnTracksBS.clear();
 
   trigger.clear();
+  triggerMB.clear();
   triggerHM60.clear();
   triggerHM85.clear();
   triggerHM110.clear();
   triggerHM135.clear();
+  triggerHM160.clear();
 
   edm::Handle<edm::TriggerResults> triggerBits;
   //edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
@@ -300,25 +304,35 @@ void HEPmcskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   countEvt++;
   //iEvent.getByLabel("selectedPatTrigger", triggerObjects);
   const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
-  int trgflag=0, trgHM60flag=0, trgHM85flag=0, trgHM110flag=0, trgHM135flag=0;
+  int trgflag=0, trgMBflag=0, trgHM60flag=0, trgHM85flag=0, trgHM110flag=0, trgHM135flag=0, trgHM160flag=0;
   for(unsigned int itt = 0; itt<names.size(); itt++)
   {
     if((names.triggerName(itt).find("HLT_ZeroBias_") != string::npos)) trgflag += (triggerBits->accept(itt) ? 1 : 0);
-    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity60ForEndOfFill_v1") != string::npos)) trgHM60flag += (triggerBits->accept(itt) ? 1 : 0);
-    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity85ForEndOfFill_v1") != string::npos)) trgHM85flag += (triggerBits->accept(itt) ? 1 : 0);
-    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity110ForEndOfFill_v1") != string::npos)) trgHM110flag += (triggerBits->accept(itt) ? 1 : 0);
-    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity135ForEndOfFill_v1") != string::npos)) trgHM135flag += (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_L1MinimumBiasHF1OR_part") != string::npos)) trgMBflag += (triggerBits->accept(itt) ? 1 : 0);
+    //if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity60ForEndOfFill_v1") != string::npos)) trgHM60flag += (triggerBits->accept(itt) ? 1 : 0);
+    //if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity85ForEndOfFill_v1") != string::npos)) trgHM85flag += (triggerBits->accept(itt) ? 1 : 0);
+    //if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity110ForEndOfFill_v1") != string::npos)) trgHM110flag += (triggerBits->accept(itt) ? 1 : 0);
+    //if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity135ForEndOfFill_v1") != string::npos)) trgHM135flag += (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity60_v2") != string::npos)) trgHM60flag += (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity85_v2") != string::npos)) trgHM85flag += (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity110_v2") != string::npos)) trgHM110flag += (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity135_v2") != string::npos)) trgHM135flag += (triggerBits->accept(itt) ? 1 : 0);
+    if((names.triggerName(itt).find("HLT_PixelTracks_Multiplicity160_v2") != string::npos)) trgHM160flag += (triggerBits->accept(itt) ? 1 : 0);
   }
   trigger.push_back(trgflag);
+  triggerMB.push_back(trgMBflag);
   triggerHM60.push_back(trgHM60flag);
   triggerHM85.push_back(trgHM85flag);
   triggerHM110.push_back(trgHM110flag);
   triggerHM135.push_back(trgHM135flag);
+  triggerHM160.push_back(trgHM160flag);
   countZB += trgflag;
+  countMB += trgMBflag;
   countHM60 += trgHM60flag;
   countHM85 += trgHM85flag;
   countHM110 += trgHM110flag;
   countHM135 += trgHM135flag;
+  countHM160 += trgHM160flag;
 //HM trigger names: HLT_PixelTracks_Multiplicity60ForEndOfFill_v1, HLT_PixelTracks_Multiplicity85ForEndOfFill_v1, HLT_PixelTracks_Multiplicity110ForEndOfFill_v1, HLT_PixelTracks_Multiplicity135ForEndOfFill_v1
 
   edm::Handle<std::vector<reco::Vertex> > hVtces;
@@ -480,15 +494,17 @@ void HEPmcskim::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 void HEPmcskim::beginJob(){
   countEvt = 0;
   countZB = 0;
+  countMB = 0;
   countHM60 = 0;
   countHM85 = 0;
   countHM110 = 0;
   countHM135 = 0;
+  countHM160 = 0;
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void HEPmcskim::endJob(){
-  std::cout<< countEvt << " " << countZB << " " <<  countHM60 << " " << countHM85 << " " <<  countHM110 << " " <<  countHM135 << std::endl;
+  std::cout<< countEvt << " " << countZB << " " <<  countMB << "  " << countHM60 << " " << countHM85 << " " <<  countHM110 << " " <<  countHM135 << " " <<  countHM160 << std::endl;
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
